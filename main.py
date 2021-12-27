@@ -10,7 +10,7 @@ class DatasetCreator():
     def __init__(self):
         pass
         
-    def images(self, path, width, height, return_rgba=False): # I don't know if this order is correct. In ML, we normally use width = height.
+    def images(path, width, height, return_rgba=False): # I don't know if this order is correct. In ML, we normally use width = height.
         '''Returns an array with shape (n_samples, width, height, n_channels). Created based on MNIST dataset(which has this shape format).
         
         path: Path where you got the images saved.
@@ -23,14 +23,14 @@ class DatasetCreator():
                 pics.append(directory+'/'+file)
             
         # Removing any files that aren't images
-        pics = [i for i in pics if ('.jpg', '.png') in i]
+        pics = [i for i in pics if '.jpg' in i or '.png' in i]
         
         pics = [Image.open(i) for i in pics]
         
         for i in range(len(pics)):
             pics[i] = pics[i].resize((width, height))
-        if pics[i].mode == 'RGBA' and return_rgba == False:
-            pics[i] = pics[i].convert('RGB')
+            if pics[i].mode == 'RGBA' and return_rgba == False:
+                pics[i] = pics[i].convert('RGB')
         
         # Converting PIL arrays back to numpy arrays
         pics = [np.array(i) for i in pics]
@@ -47,11 +47,11 @@ class DatasetCreator():
         
         return pics
     
-    def audio(self):
+    def audio():
         # TODO - Maybe if someday I learn how to create an audio dataset...
         raise NotImplementedError
     
-    def preprocess(self, dataset, type='image'):
+    def preprocess(dataset, type='image'):
         '''Normalizes the dataset, returning it with values between -1 and 1.
         If you want to plot the images, you need to denormalize it using deprocess()'''
         if type in ('image', 'img'):
@@ -64,7 +64,7 @@ class DatasetCreator():
         elif type == 'audio':
             raise NotImplementedError
 
-    def deprocess(self, dataset, type='image', normalized=True):
+    def deprocess(dataset, type='image', normalized=True):
         '''Returns the dataset in a way that it can be plotted(images) or even denormalized(normalized=False)'''
         if type in ('image', 'img'):
             if normalized:
@@ -82,13 +82,16 @@ class DatasetCreator():
 
         
     
-    def save_dataset(self, save_path, dataset_name):
+    def save_dataset(save_path, dataset):
         '''In case you forgot how to save a numpy array using np.save()'''
-        path_string = save_path + '/' + dataset_name
+        if save_path is None:
+            np.save(str(dataset), dataset)
+        else:
+            path_string = save_path + '/' + str(dataset)
         
-        np.save(path_string, dataset_name)
+            np.save(path_string, dataset)
 
-    def load_dataset(self, load_path, dataset_name):
+    def load_dataset(load_path, dataset_name):
         '''In case you forgot how to load a numpy array using np.load()'''
         dataset = np.load(load_path + '/' + dataset_name + '.npy')
 
