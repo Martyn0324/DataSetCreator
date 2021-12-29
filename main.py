@@ -25,15 +25,19 @@ class DatasetCreator():
         # Removing any files that aren't images
         pics = [i for i in pics if '.jpg' in i or '.png' in i]
         
-        pics = [Image.open(i) for i in pics]
+        images = []
+        for i in pics:
+            pic = Image.open(i)
+            pic = pic.resize((width, height))
+            if pic.mode != 'RGB' and return_rgba == False:
+                pic = pic.convert('RGB')
+            image = np.array(pic)
+            pic.close()
+            images.append(image)
         
-        for i in range(len(pics)):
-            pics[i] = pics[i].resize((width, height))
-            if pics[i].mode == 'RGBA' and return_rgba == False:
-                pics[i] = pics[i].convert('RGB')
+        pics = images
         
-        # Converting PIL arrays back to numpy arrays
-        pics = [np.array(i) for i in pics]
+        # Converting list of arrays to array of...arrays.
         
         pics = np.array(pics)
         
@@ -55,6 +59,7 @@ class DatasetCreator():
         '''Normalizes the dataset, returning it with values between -1 and 1.
         If you want to plot the images, you need to denormalize it using deprocess()'''
         if type in ('image', 'img'):
+            dataset = dataset.astype('float32') # Floats are necessary, otherwise the normalization will generate pixels with 0 values.
             dataset = dataset/127.5 - 1.0
 
             print(f"Dataset type: {type(dataset)}, {dataset.dtype}")
@@ -82,17 +87,21 @@ class DatasetCreator():
 
         
     
-    def save_dataset(save_path, dataset):
+    def save_dataset(dataset, dataset_name, save_path=None):
         '''In case you forgot how to save a numpy array using np.save()'''
         if save_path is None:
-            np.save(str(dataset), dataset)
+            np.save(dataset_name, dataset)
+            print(f'Dataset saved as {dataset_name}')
         else:
-            path_string = save_path + '/' + str(dataset)
+            path_string = save_path + '/' + dataset_name
         
             np.save(path_string, dataset)
+            print(f'Dataset saved in {path_string}')
 
     def load_dataset(load_path, dataset_name):
         '''In case you forgot how to load a numpy array using np.load()'''
         dataset = np.load(load_path + '/' + dataset_name + '.npy')
+
+        print(f"Loaded dataset from {load_path+'/'+dataset_name}")
 
         return dataset
