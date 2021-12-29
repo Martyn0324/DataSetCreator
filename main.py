@@ -60,7 +60,12 @@ class DatasetCreator():
         If you want to plot the images, you need to denormalize it using deprocess()'''
         if type in ('image', 'img'):
             dataset = dataset.astype('float32') # Floats are necessary, otherwise the normalization will generate pixels with 0 values.
-            dataset = dataset/127.5 - 1.0
+            if dataset.shape[0] > 3000:
+                for i in range(len(dataset)):
+                    dataset[i] = dataset[i]/127.5 - 1
+            
+            else:
+                dataset = dataset/127.5 - 1.0
 
             print(f"Dataset type: {type(dataset)}, {dataset.dtype}")
 
