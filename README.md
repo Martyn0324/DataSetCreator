@@ -1,6 +1,6 @@
 # DatasetCreator
 Dataset creator for Neural Networks.
-This is a Work In Progress - the code may have some problems since I didn't test it in the class and funcion forms so far, I've only directly and manually made all the processes you can find in main.py
+This is a Work In Progress - the code may have some problems, but I think it might it should be helpful at least when dealing with images(I've been using the image functions intensively...thanks GANs)
 
 This repository is no big deal. It's just some kind of annotation/tutorial so I can check it and remember how I should mount my dataset...and can also be a utility module, I guess...
 
